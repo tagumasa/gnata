@@ -415,15 +415,14 @@ func (e *Expression) EvalWithVars(ctx context.Context, data any, vars map[string
 
 // EvalWithCustomFuncsAndVars evaluates against pre-parsed data using a custom
 // environment with extra variable bindings. The env parameter should be created
-// via NewCustomEnv. This is the combined form of EvalWithCustomFuncs and EvalWithVars.
+// via NewCustomEnv.
 func (e *Expression) EvalWithCustomFuncsAndVars(ctx context.Context, data any, env *evaluator.Environment, vars map[string]any) (result any, err error) {
 	return e.evalCore(ctx, data, env, vars)
 }
 
-// EvalWithEnvAndVars is like EvalWithCustomFuncsAndVars but accepts env as any
-// to allow use from packages outside the gnata module (which cannot import
-// internal/evaluator). The env must be a *evaluator.Environment obtained from
-// NewCustomEnv.
+// EvalWithEnvAndVars evaluates against pre-parsed data with a custom environment
+// and variable bindings. Accepts env as any since external packages cannot import
+// internal/evaluator.
 func (e *Expression) EvalWithEnvAndVars(ctx context.Context, data any, env any, vars map[string]any) (result any, err error) {
 	typedEnv, ok := env.(*evaluator.Environment)
 	if !ok {
