@@ -413,6 +413,25 @@ func (e *Expression) EvalWithVars(ctx context.Context, data any, vars map[string
 	return e.evalCore(ctx, data, builtinEnv, vars)
 }
 
+// EvalWithCustomFuncsAndVars evaluates against pre-parsed data using a custom
+// environment with extra variable bindings. The env parameter should be created
+// via NewCustomEnv. This is the combined form of EvalWithCustomFuncs and EvalWithVars.
+func (e *Expression) EvalWithCustomFuncsAndVars(ctx context.Context, data any, env *evaluator.Environment, vars map[string]any) (result any, err error) {
+	return e.evalCore(ctx, data, env, vars)
+}
+
+// EvalWithEnvAndVars is like EvalWithCustomFuncsAndVars but accepts env as any
+// to allow use from packages outside the gnata module (which cannot import
+// internal/evaluator). The env must be a *evaluator.Environment obtained from
+// NewCustomEnv.
+func (e *Expression) EvalWithEnvAndVars(ctx context.Context, data any, env any, vars map[string]any) (result any, err error) {
+	typedEnv, ok := env.(*evaluator.Environment)
+	if !ok {
+		return nil, fmt.Errorf("gnata: env must be *evaluator.Environment, got %T", env)
+	}
+	return e.evalCore(ctx, data, typedEnv, vars)
+}
+
 // IsFastPath reports whether this expression uses the zero-copy GJSON pure-path fast path.
 func (e *Expression) IsFastPath() bool {
 	return e.fastPath
